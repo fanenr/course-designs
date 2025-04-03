@@ -1,6 +1,5 @@
-#include <algorithm>
-#include <cstdio>
-#include <list>
+#include "ui_mem.h"
+#include <QDebug>
 
 struct memory_allocator
 {
@@ -25,6 +24,9 @@ struct memory_allocator
   void *
   alloc (size_t size, policy policy)
   {
+    if (!size)
+      return nullptr;
+
     auto iter = blocks.end ();
 
     switch (policy)
@@ -71,28 +73,29 @@ struct memory_allocator
   void
   free (void *ptr)
   {
-    auto it = std::find_if (blocks.begin (), blocks.end (),
-                            [=] (auto const &blk) { return blk.data == ptr; });
-    if (it == blocks.end ())
+    auto iter
+        = std::find_if (blocks.begin (), blocks.end (),
+                        [=] (auto const &blk) { return blk.data == ptr; });
+    if (iter == blocks.end ())
       throw "bad ptr";
+    if (iter->free)
+      return;
 
-    auto &blk = *it;
-    blk.free = true;
-
-    auto next = std::next (it);
+    iter->free = true;
+    auto next = std::next (iter);
     if (next != blocks.end () && next->free)
       {
-        blk.size += next->size;
-        blk.data = new char[blk.size];
+        iter->size += next->size;
+        iter->data = new char[iter->size];
         blocks.erase (next);
       }
 
-    auto prev = std::prev (it);
-    if (it != blocks.begin () && prev->free)
+    auto prev = std::prev (iter);
+    if (iter != blocks.begin () && prev->free)
       {
-        prev->size += blk.size;
+        prev->size += iter->size;
         prev->data = new char[prev->size];
-        blocks.erase (it);
+        blocks.erase (iter);
       }
   }
 
@@ -132,7 +135,80 @@ private:
   }
 };
 
+void
+flush_table (QTableWidget *table, memory_allocator const &mem)
+{
+  auto row = table->rowCount ();
+
+  for (; row; row--)
+    table->removeRow (row - 1);
+
+  for (auto const &blk : mem.blocks)
+    {
+
+      auto data = new QTableWidgetItem (QString::number ((uintptr_t)blk.data));
+      auto size = new QTableWidgetItem (QString::number (blk.size));
+      auto sts = new QTableWidgetItem (blk.free ? "空闲" : "已分配");
+
+      data->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
+      size->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
+      sts->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
+
+      table->insertRow (row);
+      table->setItem (row, 0, data);
+      table->setItem (row, 1, size);
+      table->setItem (row, 2, sts);
+
+      row++;
+    }
+}
+
 int
 main (int argc, char **argv)
 {
+  auto app = QApplication (argc, argv);
+  auto win = QMainWindow ();
+  auto ui = Ui::window ();
+  ui.setupUi (&win);
+
+  ui.combo->addItems ({ "最佳适应", "最先适应", "最坏适应" });
+
+  ui.table->setEditTriggers (QAbstractItemView::NoEditTriggers);
+  ui.table->setSelectionBehavior (QAbstractItemView::SelectRows);
+  ui.table->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
+  ui.table->verticalHeader ()->setDefaultAlignment (
+      Qt::AlignmentFlag::AlignCenter);
+
+  ui.table->setColumnCount (3);
+  ui.table->setHorizontalHeaderLabels (
+      { "内存块首地址", "内存块大小", "状态" });
+
+  auto mem = memory_allocator ();
+  flush_table (ui.table, mem);
+
+  QObject::connect (ui.btn1, &QPushButton::clicked, [&] {
+    auto input = ui.edit->text ().toUInt ();
+    auto policy = (memory_allocator::policy)ui.combo->currentIndex ();
+    mem.alloc (input, policy);
+    flush_table (ui.table, mem);
+  });
+
+  QObject::connect (ui.btn2, &QPushButton::clicked, [&] {
+    auto row = ui.table->currentRow ();
+    if (row < 0)
+      return;
+    auto it = mem.blocks.begin ();
+    for (; row; row--)
+      it++;
+    mem.free (it->data);
+    flush_table (ui.table, mem);
+  });
+
+  QObject::connect (ui.btn3, &QPushButton::clicked, [&] {
+    mem = memory_allocator ();
+    flush_table (ui.table, mem);
+  });
+
+  win.show ();
+  return app.exec ();
 }

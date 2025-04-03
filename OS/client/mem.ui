@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>window</class>
+ <widget class="QMainWindow" name="window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>动态内存分配器</string>
+  </property>
+  <widget class="QWidget" name="center">
+   <layout class="QVBoxLayout" name="vlay">
+    <item>
+     <layout class="QHBoxLayout" name="hlay">
+      <item>
+       <widget class="QComboBox" name="combo"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edit"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn1">
+        <property name="text">
+         <string>分配</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn2">
+        <property name="text">
+         <string>释放</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn3">
+        <property name="text">
+         <string>清空</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="table"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
