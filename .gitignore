@@ -4,3 +4,6 @@ build/
 .venv/
 pgdata/
 __pycache__/
+
+*.o
+a.out

@@ -1,12 +1,6 @@
 #include <algorithm>
+#include <cstdio>
 #include <list>
-
-struct memory_allocator;
-
-int
-main (int argc, char **argv)
-{
-}
 
 struct memory_allocator
 {
@@ -52,26 +46,26 @@ struct memory_allocator
         if (iter->size == size)
           return iter->data;
 
-        iter->size -= size;
         auto blk = block{ true, (char *)iter->data + size, iter->size - size };
+        iter->size = size;
 
         blocks.insert (std::next (iter), blk);
         return iter->data;
       }
 
-    if (size >= 4096)
+    if (size < 4096)
       {
-        auto new_blk = block{ false, new char[size], size };
-        blocks.push_back (new_blk);
-        return new_blk.data;
+        auto data = new char[4096];
+        auto blk1 = block{ false, data, size };
+        auto blk2 = block{ true, data + size, 4096 - size };
+        blocks.push_back (blk1);
+        blocks.push_back (blk2);
+        return data;
       }
 
-    auto data = new char[4096];
-    auto blk1 = block{ false, data, size };
-    auto blk2 = block{ true, data + size, 4096 - size };
-    blocks.push_back (blk1);
-    blocks.push_back (blk2);
-    return data;
+    auto blk = block{ false, new char[size], size };
+    blocks.push_back (blk);
+    return blk.data;
   }
 
   void
@@ -137,3 +131,8 @@ private:
     return iter;
   }
 };
+
+int
+main (int argc, char **argv)
+{
+}
