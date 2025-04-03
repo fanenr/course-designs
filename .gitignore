@@ -1,0 +1,6 @@
+build/
+.cache/
+
+.venv/
+pgdata/
+__pycache__/
