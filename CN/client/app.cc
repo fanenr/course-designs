@@ -16,7 +16,7 @@ main (int argc, char **argv)
   win.show ();
 
   bool querying = false;
-  win.connect (ui.btn, &QPushButton::clicked, [&] {
+  QObject::connect (ui.btn, &QPushButton::clicked, [&] {
     if (querying)
       return;
     querying = true;

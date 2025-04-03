@@ -25,8 +25,6 @@ target_link_libraries(client
   Qt6::Widgets
   Qt6::Network)
 
-# target_include_directories(client PRIVATE include)
-
 set_target_properties(client
   PROPERTIES
   MACOSX_BUNDLE ON
