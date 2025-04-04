@@ -75,7 +75,7 @@ struct memory_allocator
   {
     auto iter
         = std::find_if (blocks.begin (), blocks.end (),
-                        [=] (auto const &blk) { return blk.data == ptr; });
+                        [=] (auto const &blk) { return ptr == blk.data; });
     if (iter == blocks.end ())
       throw "bad ptr";
     if (iter->free)
@@ -138,11 +138,9 @@ private:
 void
 flush_table (QTableWidget *table, memory_allocator const &mem)
 {
-  auto row = table->rowCount ();
+  table->setRowCount (0);
 
-  for (; row; row--)
-    table->removeRow (row - 1);
-
+  auto row = 0;
   for (auto const &blk : mem.blocks)
     {
 
@@ -172,9 +170,12 @@ main (int argc, char **argv)
   ui.setupUi (&win);
 
   ui.combo->addItems ({ "最佳适应", "最先适应", "最坏适应" });
+  auto valid = new QIntValidator (0, INT_MAX, &win);
+  ui.edit->setValidator (valid);
 
   ui.table->setEditTriggers (QAbstractItemView::NoEditTriggers);
   ui.table->setSelectionBehavior (QAbstractItemView::SelectRows);
+  ui.table->setSelectionMode (QAbstractItemView::SingleSelection);
   ui.table->horizontalHeader ()->setSectionResizeMode (QHeaderView::Stretch);
   ui.table->verticalHeader ()->setDefaultAlignment (
       Qt::AlignmentFlag::AlignCenter);
