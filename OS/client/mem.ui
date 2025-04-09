@@ -21,7 +21,11 @@
        <widget class="QComboBox" name="combo"/>
       </item>
       <item>
-       <widget class="QLineEdit" name="edit"/>
+       <widget class="QLineEdit" name="edit">
+        <property name="placeholderText">
+         <string>内存大小</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="btn1">

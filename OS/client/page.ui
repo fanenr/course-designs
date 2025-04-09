@@ -13,7 +13,58 @@
   <property name="windowTitle">
    <string>分页内存管理</string>
   </property>
-  <widget class="QWidget" name="center"/>
+  <widget class="QWidget" name="center">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="hlay">
+      <item>
+       <widget class="QComboBox" name="combo"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edit1">
+        <property name="placeholderText">
+         <string>页号</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edit2">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>页内地址</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="edit3">
+        <property name="placeholderText">
+         <string>虚拟地址</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn">
+        <property name="text">
+         <string>执行</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="table"/>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections/>
