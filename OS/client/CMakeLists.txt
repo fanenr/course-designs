@@ -15,10 +15,18 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS .)
 qt_add_executable(mem
   mem.cc
   mem.ui)
+qt_add_executable(page
+  page.cc
+  page.ui)
 
 target_link_libraries(mem PRIVATE Qt6::Widgets)
+target_link_libraries(page PRIVATE Qt6::Widgets)
 
 set_target_properties(mem
+  PROPERTIES
+  MACOSX_BUNDLE ON
+  WIN32_EXECUTABLE ON)
+set_target_properties(page
   PROPERTIES
   MACOSX_BUNDLE ON
   WIN32_EXECUTABLE ON)
