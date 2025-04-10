@@ -143,7 +143,6 @@ flush_table (QTableWidget *table, memory_allocator const &mem)
   auto row = 0;
   for (auto const &blk : mem.blocks)
     {
-
       auto data = new QTableWidgetItem (QString::number ((uintptr_t)blk.data));
       auto size = new QTableWidgetItem (QString::number (blk.size));
       auto sts = new QTableWidgetItem (blk.free ? "空闲" : "已分配");
