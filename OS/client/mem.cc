@@ -100,7 +100,8 @@ struct memory_allocator
   }
 
 private:
-  decltype (blocks)::iterator first_block (size_t size)
+  decltype (blocks)::iterator
+  first_block (size_t size)
   {
     for (auto it = blocks.begin (); it != blocks.end (); it++)
       if (it->free && it->size >= size)
@@ -108,7 +109,8 @@ private:
     return blocks.end ();
   }
 
-  decltype (blocks)::iterator best_block (size_t size)
+  decltype (blocks)::iterator
+  best_block (size_t size)
   {
     auto iter = blocks.end ();
     for (auto it = blocks.begin (); it != blocks.end (); it++)
@@ -121,7 +123,8 @@ private:
     return iter;
   }
 
-  decltype (blocks)::iterator worst_block (size_t size)
+  decltype (blocks)::iterator
+  worst_block (size_t size)
   {
     auto iter = blocks.end ();
     for (auto it = blocks.begin (); it != blocks.end (); it++)
