@@ -1,5 +1,4 @@
 #include "ui_mem.h"
-#include <QDebug>
 
 struct memory_allocator
 {
@@ -27,8 +26,14 @@ struct memory_allocator
     if (!size)
       return nullptr;
 
-    auto iter = blocks.end ();
+    if (size >= 4096)
+      {
+        auto blk = block{ false, new char[size], size };
+        blocks.push_back (blk);
+        return blk.data;
+      }
 
+    auto iter = blocks.end ();
     switch (policy)
       {
       case policy::best:
@@ -42,32 +47,22 @@ struct memory_allocator
         break;
       }
 
-    if (iter != blocks.end ())
-      {
-        iter->free = false;
-        if (iter->size == size)
-          return iter->data;
-
-        auto blk = block{ true, (char *)iter->data + size, iter->size - size };
-        iter->size = size;
-
-        blocks.insert (std::next (iter), blk);
-        return iter->data;
-      }
-
-    if (size < 4096)
+    if (iter == blocks.end ())
       {
         auto data = new char[4096];
-        auto blk1 = block{ false, data, size };
-        auto blk2 = block{ true, data + size, 4096 - size };
-        blocks.push_back (blk1);
-        blocks.push_back (blk2);
+        blocks.push_back (block{ false, data, size });
+        blocks.push_back (block{ true, data + size, 4096 - size });
         return data;
       }
 
-    auto blk = block{ false, new char[size], size };
-    blocks.push_back (blk);
-    return blk.data;
+    iter->free = false;
+    if (iter->size != size)
+      {
+        auto blk = block{ true, (char *)iter->data + size, iter->size - size };
+        iter->size = size;
+        blocks.insert (std::next (iter), blk);
+      }
+    return iter->data;
   }
 
   void
@@ -146,18 +141,19 @@ flush_table (QTableWidget *table, memory_allocator const &mem)
   auto row = 0;
   for (auto const &blk : mem.blocks)
     {
-      auto data = new QTableWidgetItem (QString::number ((uintptr_t)blk.data));
-      auto size = new QTableWidgetItem (QString::number (blk.size));
       auto sts = new QTableWidgetItem (blk.free ? "空闲" : "已分配");
+      auto size = new QTableWidgetItem (QString::number (blk.size));
+      auto data = new QTableWidgetItem (
+          "0x" + QString::number ((size_t)blk.data), 16);
 
-      data->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
-      size->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
       sts->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
+      size->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
+      data->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
 
       table->insertRow (row);
-      table->setItem (row, 0, data);
-      table->setItem (row, 1, size);
       table->setItem (row, 2, sts);
+      table->setItem (row, 1, size);
+      table->setItem (row, 0, data);
 
       row++;
     }
