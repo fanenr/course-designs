@@ -150,6 +150,9 @@ flush_table (QTableWidget *table, memory_allocator const &mem)
       size->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
       data->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
 
+      if (!blk.free)
+        sts->setForeground (QBrush (Qt::red));
+
       table->insertRow (row);
       table->setItem (row, 2, sts);
       table->setItem (row, 1, size);
