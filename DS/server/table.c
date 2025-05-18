@@ -66,34 +66,34 @@ find_by (json_t *tbl, find_pair_t *cnd, size_t num)
   for (size_t i = 0; i < size; i++)
     {
       if (!(item = json_array_get (tbl, i)))
-        error ("json 格式损坏");
+	error ("json 格式损坏");
 
       for (size_t j = 0; j < num; j++)
-        {
-          find_pair_t *pair = cnd + j;
+	{
+	  find_pair_t *pair = cnd + j;
 
-          if (!(temp = json_object_get (item, pair->key)))
-            error ("不存在键 %s", pair->key);
+	  if (!(temp = json_object_get (item, pair->key)))
+	    error ("不存在键 %s", pair->key);
 
-          if (pair->typ == TYP_INT)
-            {
-              if (!json_is_integer (temp))
-                error ("类型不匹配");
-              ival = json_integer_value (temp);
-              if (pair->val.ival != ival)
-                goto next;
-            }
-          else if (pair->typ == TYP_STR)
-            {
-              if (!json_is_string (temp))
-                error ("类型不匹配");
-              sval = json_string_value (temp);
-              if (0 != strcmp (pair->val.sval, sval))
-                goto next;
-            }
-          else
-            error ("未知类型 %d", pair->typ);
-        }
+	  if (pair->typ == TYP_INT)
+	    {
+	      if (!json_is_integer (temp))
+		error ("类型不匹配");
+	      ival = json_integer_value (temp);
+	      if (pair->val.ival != ival)
+		goto next;
+	    }
+	  else if (pair->typ == TYP_STR)
+	    {
+	      if (!json_is_string (temp))
+		error ("类型不匹配");
+	      sval = json_string_value (temp);
+	      if (0 != strcmp (pair->val.sval, sval))
+		goto next;
+	    }
+	  else
+	    error ("未知类型 %d", pair->typ);
+	}
 
       ret.item = item;
       ret.index = i;

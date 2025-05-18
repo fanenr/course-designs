@@ -24,8 +24,8 @@ Log::on_pbtn1_clicked ()
   auto pass = ui.ledit2->text ();
 
   if (user.isEmpty () || pass.isEmpty ())
-    return (void)QMessageBox::warning (nullptr, tr ("提示"),
-                                       tr ("请输入帐号密码"));
+    return (void) QMessageBox::warning (nullptr, tr ("提示"),
+					tr ("请输入帐号密码"));
 
   auto dialog = QDialog (this);
   auto ui = Ui::Reg ();
@@ -39,11 +39,11 @@ Log::on_pbtn1_clicked ()
     auto date = ui.ledit2->text ();
 
     if (name.isEmpty () || date.isEmpty ())
-      return (void)QMessageBox::warning (nullptr, tr ("提示"),
-                                         tr ("请完整填写信息"));
+      return (void) QMessageBox::warning (nullptr, tr ("提示"),
+					  tr ("请完整填写信息"));
 
     auto url = QString (type == Type::STUDENT ? URL_STUDENT_REGISTER
-                                              : URL_TEACHER_REGISTER);
+					      : URL_TEACHER_REGISTER);
 
     auto data = QMap<QString, QVariant>{
       { "username", std::move (user) },
@@ -60,7 +60,7 @@ Log::on_pbtn1_clicked ()
       return;
 
     QMessageBox::information (nullptr, tr ("成功"),
-                              tr ("注册成功，请返回登录"));
+			      tr ("注册成功，请返回登录"));
     dialog.close ();
   });
 
@@ -74,12 +74,12 @@ Log::on_pbtn2_clicked ()
   auto pass = ui.ledit2->text ();
 
   if (user.isEmpty () || pass.isEmpty ())
-    return (void)QMessageBox::warning (nullptr, tr ("提示"),
-                                       tr ("请输入帐号密码"));
+    return (void) QMessageBox::warning (nullptr, tr ("提示"),
+					tr ("请输入帐号密码"));
 
   auto type = category ();
   auto url = QString (type == Type::STUDENT ? URL_STUDENT_LOGIN
-                                            : URL_TEACHER_LOGIN);
+					    : URL_TEACHER_LOGIN);
 
   auto data = QMap<QString, QVariant>{
     { "password", std::move (pass) },

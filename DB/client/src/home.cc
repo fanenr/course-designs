@@ -37,7 +37,7 @@ Home::load_course ()
   ui.gbox2->setTitle (tr ("课程列表"));
 
   auto url = QString (type == Type::STUDENT ? URL_STUDENT_COURSE_LIST
-                                            : URL_TEACHER_COURSE_LIST);
+					    : URL_TEACHER_COURSE_LIST);
 
   auto http = Http ();
   auto req = Request (url).form ().jwt (info.token);
@@ -51,12 +51,12 @@ Home::load_course ()
     {
       auto obj = e.toObject ();
       auto item = Course{
-        .id = obj["id"].toInt (),
-        .name = obj["name"].toString (),
-        .start = obj["start"].toString (),
+	.id = obj["id"].toInt (),
+	.name = obj["name"].toString (),
+	.start = obj["start"].toString (),
       };
       item.teacher
-          = (type == Type::STUDENT) ? obj["teacher"].toString () : info.name;
+	  = (type == Type::STUDENT) ? obj["teacher"].toString () : info.name;
       new CourseItem (ui.list, std::move (item));
     }
 }
@@ -69,7 +69,7 @@ Home::load_grade ()
   ui.gbox2->setTitle (tr ("成绩列表"));
 
   auto url = QString (type == Type::STUDENT ? URL_STUDENT_GRADE_LIST
-                                            : URL_TEACHER_GRADE_LIST);
+					    : URL_TEACHER_GRADE_LIST);
 
   auto http = Http ();
   auto req = Request (url).form ().jwt (info.token);
@@ -83,10 +83,10 @@ Home::load_grade ()
     {
       auto obj = e.toObject ();
       auto item = Grade{
-        .id = obj["id"].toInt (),
-        .score = obj["score"].toInt (),
-        .name = obj["name"].toString (),
-        .course = obj["course"].toString (),
+	.id = obj["id"].toInt (),
+	.score = obj["score"].toInt (),
+	.name = obj["name"].toString (),
+	.course = obj["course"].toString (),
       };
       new GradeItem (ui.list, std::move (item));
     }
@@ -136,8 +136,8 @@ Home::course_new ()
     auto name = ui.ledit1->text ();
     auto start = ui.ledit2->text ();
     if (name.isEmpty () || start.isEmpty ())
-      return (void)QMessageBox::warning (nullptr, tr ("提示"),
-                                         tr ("请完整填写信息"));
+      return (void) QMessageBox::warning (nullptr, tr ("提示"),
+					  tr ("请完整填写信息"));
 
     auto url = QString (URL_TEACHER_COURSE_CREATE);
     auto data = QMap<QString, QVariant>{
@@ -166,7 +166,7 @@ Home::on_pbtn5_clicked ()
   if (type == Type::TEACHER)
     return course_new ();
 
-  auto item = (CourseItem *)ui.list->currentItem ();
+  auto item = (CourseItem *) ui.list->currentItem ();
   if (item == nullptr)
     return;
 
@@ -206,7 +206,7 @@ Home::grade_analy ()
   auto items = QList<GradeItem *> ();
 
   for (int i = 0; i < count; i++)
-    items.append ((GradeItem *)list->item (i));
+    items.append ((GradeItem *) list->item (i));
 
   long sum_grade = 0;
   double sum_point = 0;
@@ -233,29 +233,29 @@ Home::grade_analy ()
       sum_grade += s;
 
       if (s < 60)
-        points[0.0]++;
+	points[0.0]++;
       else if (s < 64)
-        points[1.0]++;
+	points[1.0]++;
       else if (s < 68)
-        points[1.5]++;
+	points[1.5]++;
       else if (s < 72)
-        points[2.0]++;
+	points[2.0]++;
       else if (s < 75)
-        points[2.3]++;
+	points[2.3]++;
       else if (s < 78)
-        points[2.7]++;
+	points[2.7]++;
       else if (s < 82)
-        points[3.0]++;
+	points[3.0]++;
       else if (s < 85)
-        points[3.3]++;
+	points[3.3]++;
       else if (s < 90)
-        points[3.7]++;
+	points[3.7]++;
       else
-        points[4.0]++;
+	points[4.0]++;
     }
 
   auto on_slice_hovered = [this] (bool sts) {
-    auto slice = (QPieSlice *)QObject::sender ();
+    auto slice = (QPieSlice *) QObject::sender ();
     slice->setExploded (sts);
   };
 
@@ -266,19 +266,19 @@ Home::grade_analy ()
       sum_point += key * value;
 
       if (value != 0)
-        {
-          auto rate = value / (double)count;
-          auto label = QString::number (key, 'f', 1);
-          auto slice = new QPieSlice (label, rate, series);
-          connect (slice, &QPieSlice::hovered, this, on_slice_hovered);
+	{
+	  auto rate = value / (double) count;
+	  auto label = QString::number (key, 'f', 1);
+	  auto slice = new QPieSlice (label, rate, series);
+	  connect (slice, &QPieSlice::hovered, this, on_slice_hovered);
 
-          series->append (slice);
-        }
+	  series->append (slice);
+	}
     }
 
   auto avg_grade = count ? sum_grade / count : 0;
-  auto avg_point = count ? sum_point / (double)count : 0.0;
-  auto rate = count ? (count - points[0.0]) / (double)count : 0.0;
+  auto avg_point = count ? sum_point / (double) count : 0.0;
+  auto rate = count ? (count - points[0.0]) / (double) count : 0.0;
 
   ui.info1->setText (QString::number (count));
   ui.info2->setText (QString::number (avg_grade));
@@ -304,7 +304,7 @@ Home::grade_analy ()
 void
 Home::grade_mark ()
 {
-  auto item = (GradeItem *)ui.list->currentItem ();
+  auto item = (GradeItem *) ui.list->currentItem ();
   if (item == nullptr)
     return;
 
@@ -323,8 +323,8 @@ Home::grade_mark ()
   connect (ui.pbtn2, &QPushButton::clicked, [&, this] {
     auto score = ui.ledit1->text ();
     if (score.isEmpty ())
-      return (void)QMessageBox::warning (nullptr, tr ("提示"),
-                                         tr ("请完整填写信息"));
+      return (void) QMessageBox::warning (nullptr, tr ("提示"),
+					  tr ("请完整填写信息"));
 
     auto url = QString (URL_TEACHER_GRADE_UPDATE);
     auto data = QMap<QString, QVariant>{

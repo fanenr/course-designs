@@ -40,15 +40,15 @@ check_reply (QNetworkReply *reply)
   if (!sts.isValid ())
     {
       QMessageBox::warning (nullptr, QObject::tr ("错误"),
-                            QObject::tr ("网络错误：无法发送网络请求"));
+			    QObject::tr ("网络错误：无法发送网络请求"));
       return false;
     }
 
   auto msg = QString::fromUtf8 (reply->readAll ());
   auto body = QString ("%1（%2）：%3")
-                  .arg (QObject::tr ("响应错误"))
-                  .arg (sts.toInt ())
-                  .arg (msg);
+		  .arg (QObject::tr ("响应错误"))
+		  .arg (sts.toInt ())
+		  .arg (msg);
 
   QMessageBox::warning (nullptr, QObject::tr ("错误"), body);
   return false;

@@ -62,29 +62,29 @@ createDnsQuery (const QString &domain)
   stream.setByteOrder (QDataStream::BigEndian);
 
   // 写入 DNS 头部 (12 字节)
-  stream << (quint16)0x0000; // 查询 ID (2 字节)
-  stream << (quint16)0x0100; // 标志：标准查询 (2 字节)
-  stream << (quint16)0x0001; // 问题数量：1 (2 字节)
-  stream << (quint16)0x0000; // 回答 RR 数量 (2 字节)
-  stream << (quint16)0x0000; // 授权 RR 数量 (2 字节)
-  stream << (quint16)0x0000; // 额外 RR 数量 (2 字节)
+  stream << (quint16) 0x0000; // 查询 ID (2 字节)
+  stream << (quint16) 0x0100; // 标志：标准查询 (2 字节)
+  stream << (quint16) 0x0001; // 问题数量：1 (2 字节)
+  stream << (quint16) 0x0000; // 回答 RR 数量 (2 字节)
+  stream << (quint16) 0x0000; // 授权 RR 数量 (2 字节)
+  stream << (quint16) 0x0000; // 额外 RR 数量 (2 字节)
 
   // 将域名转换为 DNS 格式：每段前加长度字节
   auto parts = domain.split (".");
   for (auto const &part : parts)
     {
       auto bytes = part.toUtf8 ();
-      stream << (quint8)bytes.length (); // 长度字节
+      stream << (quint8) bytes.length (); // 长度字节
       stream.writeRawData (bytes.data (),
-                           bytes.size ()); // 写入部分域名
+			   bytes.size ()); // 写入部分域名
     }
 
   // 域名结束符
-  stream << (quint8)0;
+  stream << (quint8) 0;
 
   // 查询类型和查询类
-  stream << (quint16)0x0001; // A 记录类型 (2 字节)
-  stream << (quint16)0x0001; // IN 类 (2 字节)
+  stream << (quint16) 0x0001; // A 记录类型 (2 字节)
+  stream << (quint16) 0x0001; // IN 类 (2 字节)
 
   return query;
 }
@@ -126,13 +126,13 @@ parseDnsResponse (const QByteArray &response)
   int pos = 12;
   while (pos < response.size ())
     {
-      auto len = (quint8)response[pos];
+      auto len = (quint8) response[pos];
 
       if (len == 0) // 域名结束
-        {
-          pos++;
-          break;
-        }
+	{
+	  pos++;
+	  break;
+	}
 
       pos += len + 1;
     }
@@ -147,7 +147,7 @@ parseDnsResponse (const QByteArray &response)
       pos += 2;
 
       // 获取记录类型
-      auto type = ((quint8)response[pos] << 8) | (quint8)response[pos + 1];
+      auto type = ((quint8) response[pos] << 8) | (quint8) response[pos + 1];
       pos += 2;
 
       // 跳过记录类 (2 字节)
@@ -157,18 +157,19 @@ parseDnsResponse (const QByteArray &response)
       pos += 4;
 
       // 获取数据长度
-      auto len = ((quint8)response[pos] << 8) | (quint8)response[pos + 1];
+      auto len = ((quint8) response[pos] << 8) | (quint8) response[pos + 1];
       pos += 2;
 
       // 如果是 A 记录 (IPv4)
       if (type == 1 && len == 4)
-        {
-          auto ip = QHostAddress (
-              ((quint8)response[pos] << 24) | ((quint8)response[pos + 1] << 16)
-              | ((quint8)response[pos + 2] << 8) | (quint8)response[pos + 3]);
+	{
+	  auto ip = QHostAddress (((quint8) response[pos] << 24)
+				  | ((quint8) response[pos + 1] << 16)
+				  | ((quint8) response[pos + 2] << 8)
+				  | (quint8) response[pos + 3]);
 
-          return ip.toString ();
-        }
+	  return ip.toString ();
+	}
 
       // 跳过该条目的数据部分
       pos += len;

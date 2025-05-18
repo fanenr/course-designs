@@ -31,7 +31,7 @@ struct Request
   {
     type = ContentType::FORM;
     req.setHeader (QNetworkRequest::ContentTypeHeader,
-                   "application/x-www-form-urlencoded");
+		   "application/x-www-form-urlencoded");
     return *this;
   }
 
@@ -83,12 +83,12 @@ public:
 
     for (auto it = map.cbegin (); it != map.cend ();)
       {
-        str.append (it.key ()).append ("=");
-        auto value = it.value ().toString ();
-        str += is_form ? QUrl::toPercentEncoding (value) : value;
+	str.append (it.key ()).append ("=");
+	auto value = it.value ().toString ();
+	str += is_form ? QUrl::toPercentEncoding (value) : value;
 
-        if (++it != map.cend ())
-          str.append ("&");
+	if (++it != map.cend ())
+	  str.append ("&");
       }
 
     return post (req, str.toUtf8 ());

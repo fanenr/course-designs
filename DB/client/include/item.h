@@ -70,7 +70,7 @@ public:
   bool
   operator< (QListWidgetItem const &other) const override
   {
-    return data.score < ((GradeItem const &)other).data.score;
+    return data.score < ((GradeItem const &) other).data.score;
   }
 };
 
@@ -90,7 +90,7 @@ public:
   bool
   operator< (QListWidgetItem const &other) const override
   {
-    return data.name < ((CourseItem const &)other).data.name;
+    return data.name < ((CourseItem const &) other).data.name;
   }
 };
 

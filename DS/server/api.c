@@ -62,7 +62,7 @@ static void eva_del (api_ret *ret, json_t *rdat);
 #define FIND_BY1(TBL, KEY1, TYP1, VAL1)                                       \
   ({                                                                          \
     find_pair_t cnd[]                                                         \
-        = { { .typ = (TYP1), .val = (find_val_t)(VAL1), .key = (KEY1) } };    \
+	= { { .typ = (TYP1), .val = (find_val_t) (VAL1), .key = (KEY1) } };   \
     find_ret_t ret = find_by ((TBL), cnd, 1);                                 \
     ret;                                                                      \
   })
@@ -70,8 +70,8 @@ static void eva_del (api_ret *ret, json_t *rdat);
 #define FIND_BY2(TBL, KEY1, TYP1, VAL1, KEY2, TYP2, VAL2)                     \
   ({                                                                          \
     find_pair_t cnd[]                                                         \
-        = { { .typ = (TYP1), .val = (find_val_t)(VAL1), .key = (KEY1) },      \
-            { .typ = (TYP2), .val = (find_val_t)(VAL2), .key = (KEY2) } };    \
+	= { { .typ = (TYP1), .val = (find_val_t) (VAL1), .key = (KEY1) },     \
+	    { .typ = (TYP2), .val = (find_val_t) (VAL2), .key = (KEY2) } };   \
     find_ret_t ret = find_by ((TBL), cnd, 2);                                 \
     ret;                                                                      \
   })
@@ -102,8 +102,8 @@ api_handle (struct mg_http_message *msg)
   do                                                                          \
     if (mg_match (msg->uri, mg_str ("/api/" #TYPE "/" #API), NULL))           \
       {                                                                       \
-        TYPE##_##API (&ret, rdat);                                            \
-        goto ret;                                                             \
+	TYPE##_##API (&ret, rdat);                                            \
+	goto ret;                                                             \
       }                                                                       \
   while (0)
 
@@ -395,7 +395,7 @@ merchant_mod (api_ret *ret, json_t *rdat)
       const char *euser_str = json_string_value (euser);
 
       if (!ISSEQ (user_str, euser_str))
-        RET_STR (ret, API_ERR_DUPLICATE, "店名已存在");
+	RET_STR (ret, API_ERR_DUPLICATE, "店名已存在");
     }
 
   json_t *rpass = GET (find.item, "pass", string, err2);
@@ -483,7 +483,7 @@ menu_list (api_ret *ret, json_t *rdat)
       json_t *position = GET (find.item, "position", string, err);
 
       if (!(temp = json_object ()))
-        goto err2;
+	goto err2;
 
       SET (temp, "id", id, err3);
       SET (temp, "name", name, err3);
@@ -493,7 +493,7 @@ menu_list (api_ret *ret, json_t *rdat)
       SET (temp, "position", position, err3);
 
       if (0 != json_array_append_new (arr, temp))
-        goto err3;
+	goto err3;
     }
 
   char *list_str = json_dumps (arr, 0);
@@ -698,7 +698,7 @@ eva_list (api_ret *ret, json_t *rdat)
       json_int_t item_id_int = json_integer_value (item_id);
 
       if (item_id_int != id_int)
-        continue;
+	continue;
 
       json_t *evaluation = GET (item, "evaluation", string, err2);
       json_t *grade = GET (item, "grade", number, err2);
@@ -710,7 +710,7 @@ eva_list (api_ret *ret, json_t *rdat)
       const char *uname_str = json_string_value (uname);
 
       if (!(temp = json_object ()))
-        goto err2;
+	goto err2;
 
       SET (temp, "id", id, err4);
       SET (temp, "user", user, err4);
@@ -719,7 +719,7 @@ eva_list (api_ret *ret, json_t *rdat)
       SET (temp, "evaluation", evaluation, err4);
 
       if (0 != json_array_append_new (arr, temp))
-        goto err4;
+	goto err4;
     }
 
   char *list_str = json_dumps (arr, 0);
@@ -775,7 +775,7 @@ eva_new (api_ret *ret, json_t *rdat)
     RET_STR (ret, API_ERR_WRONG_PASS, "密码错误");
 
   find_ret_t find3 = FIND_BY2 (table_evaluation, "id", TYP_INT, id_int, "user",
-                               TYP_STR, user_str);
+			       TYP_STR, user_str);
 
   if (find3.item)
     RET_STR (ret, API_ERR_DUPLICATE, "已经评价过该菜品");
@@ -837,7 +837,7 @@ eva_mod (api_ret *ret, json_t *rdat)
     RET_STR (ret, API_ERR_WRONG_PASS, "密码错误");
 
   find_ret_t find3 = FIND_BY2 (table_evaluation, "id", TYP_INT, id_int, "user",
-                               TYP_STR, user_str);
+			       TYP_STR, user_str);
 
   if (!find3.item)
     RET_STR (ret, API_ERR_NOT_EXIST, "未评价过该菜品");
@@ -886,7 +886,7 @@ eva_del (api_ret *ret, json_t *rdat)
     RET_STR (ret, API_ERR_WRONG_PASS, "密码错误");
 
   find_ret_t find3 = FIND_BY2 (table_evaluation, "id", TYP_INT, id_int, "user",
-                               TYP_STR, user_str);
+			       TYP_STR, user_str);
 
   if (!find3.item)
     RET_STR (ret, API_ERR_NOT_EXIST, "未评价过该菜品");

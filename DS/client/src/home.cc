@@ -27,14 +27,14 @@ Home::Home (type typ, info_t info)
   });
 
   connect (ui.list, &QListWidget::currentItemChanged,
-           [this] (auto item, auto prev) {
-             if (sts == stat::DISH && item)
-               {
-                 ui.pbtn4->setEnabled (true);
-                 ui.pbtn5->setEnabled (true);
-                 ui.pbtn6->setEnabled (true);
-               }
-           });
+	   [this] (auto item, auto prev) {
+	     if (sts == stat::DISH && item)
+	       {
+		 ui.pbtn4->setEnabled (true);
+		 ui.pbtn5->setEnabled (true);
+		 ui.pbtn6->setEnabled (true);
+	       }
+	   });
 
   load_info ();
   load_dish ();
@@ -78,13 +78,13 @@ Home::load_dish ()
   for (auto item : arr)
     {
       auto obj = item.toObject ();
-      auto dish = (Dish){
-        .id = obj["id"].toInteger (),
-        .price = obj["price"].toDouble (),
-        .name = obj["name"].toString (),
-        .user = obj["user"].toString (),
-        .uname = obj["uname"].toString (),
-        .position = obj["position"].toString (),
+      auto dish = (Dish) {
+	.id = obj["id"].toInteger (),
+	.price = obj["price"].toDouble (),
+	.name = obj["name"].toString (),
+	.user = obj["user"].toString (),
+	.uname = obj["uname"].toString (),
+	.position = obj["position"].toString (),
       };
       new DishItem (ui.list, std::move (dish));
     }
@@ -118,12 +118,12 @@ Home::load_eval ()
   for (auto elem : arr)
     {
       auto obj = elem.toObject ();
-      auto eval = (Eval){
-        .id = obj["id"].toInteger (),
-        .grade = obj["grade"].toDouble (),
-        .user = obj["user"].toString (),
-        .uname = obj["uname"].toString (),
-        .evaluation = obj["evaluation"].toString (),
+      auto eval = (Eval) {
+	.id = obj["id"].toInteger (),
+	.grade = obj["grade"].toDouble (),
+	.user = obj["user"].toString (),
+	.uname = obj["uname"].toString (),
+	.evaluation = obj["evaluation"].toString (),
       };
       new EvalItem (ui.list, std::move (eval));
     }
@@ -161,15 +161,15 @@ Home::on_pbtn5_clicked ()
     {
     case type::STUDENT:
       {
-        auto dialog = Eva (this, oper::NEW);
-        dialog.exec ();
+	auto dialog = Eva (this, oper::NEW);
+	dialog.exec ();
       }
       break;
 
     case type::MERCHANT:
       {
-        auto dialog = New (this, oper::NEW);
-        dialog.exec ();
+	auto dialog = New (this, oper::NEW);
+	dialog.exec ();
       }
       break;
     }
@@ -182,15 +182,15 @@ Home::on_pbtn6_clicked ()
     {
     case type::STUDENT:
       {
-        auto dialog = Eva (this, oper::MOD);
-        dialog.exec ();
+	auto dialog = Eva (this, oper::MOD);
+	dialog.exec ();
       }
       break;
 
     case type::MERCHANT:
       {
-        auto dialog = New (this, oper::MOD);
-        dialog.exec ();
+	auto dialog = New (this, oper::MOD);
+	dialog.exec ();
       }
       break;
     }

@@ -28,39 +28,40 @@ struct memory_allocator
 
     if (size >= 4096)
       {
-        auto blk = block{ false, new char[size], size };
-        blocks.push_back (blk);
-        return blk.data;
+	auto blk = block{ false, new char[size], size };
+	blocks.push_back (blk);
+	return blk.data;
       }
 
     auto iter = blocks.end ();
     switch (policy)
       {
       case policy::best:
-        iter = best_block (size);
-        break;
+	iter = best_block (size);
+	break;
       case policy::first:
-        iter = first_block (size);
-        break;
+	iter = first_block (size);
+	break;
       case policy::worst:
-        iter = worst_block (size);
-        break;
+	iter = worst_block (size);
+	break;
       }
 
     if (iter == blocks.end ())
       {
-        auto data = new char[4096];
-        blocks.push_back (block{ false, data, size });
-        blocks.push_back (block{ true, data + size, 4096 - size });
-        return data;
+	auto data = new char[4096];
+	blocks.push_back (block{ false, data, size });
+	blocks.push_back (block{ true, data + size, 4096 - size });
+	return data;
       }
 
     iter->free = false;
     if (iter->size != size)
       {
-        auto blk = block{ true, (char *)iter->data + size, iter->size - size };
-        iter->size = size;
-        blocks.insert (std::next (iter), blk);
+	auto blk
+	    = block{ true, (char *) iter->data + size, iter->size - size };
+	iter->size = size;
+	blocks.insert (std::next (iter), blk);
       }
     return iter->data;
   }
@@ -69,8 +70,8 @@ struct memory_allocator
   free (void *ptr)
   {
     auto iter
-        = std::find_if (blocks.begin (), blocks.end (),
-                        [=] (auto const &blk) { return ptr == blk.data; });
+	= std::find_if (blocks.begin (), blocks.end (),
+			[=] (auto const &blk) { return ptr == blk.data; });
     if (iter == blocks.end ())
       throw "bad ptr";
     if (iter->free)
@@ -80,54 +81,51 @@ struct memory_allocator
     auto next = std::next (iter);
     if (next != blocks.end () && next->free)
       {
-        iter->size += next->size;
-        iter->data = new char[iter->size];
-        blocks.erase (next);
+	iter->size += next->size;
+	iter->data = new char[iter->size];
+	blocks.erase (next);
       }
 
     auto prev = std::prev (iter);
     if (iter != blocks.begin () && prev->free)
       {
-        prev->size += iter->size;
-        prev->data = new char[prev->size];
-        blocks.erase (iter);
+	prev->size += iter->size;
+	prev->data = new char[prev->size];
+	blocks.erase (iter);
       }
   }
 
 private:
-  decltype (blocks)::iterator
-  first_block (size_t size)
+  decltype (blocks)::iterator first_block (size_t size)
   {
     for (auto it = blocks.begin (); it != blocks.end (); it++)
       if (it->free && it->size >= size)
-        return it;
+	return it;
     return blocks.end ();
   }
 
-  decltype (blocks)::iterator
-  best_block (size_t size)
+  decltype (blocks)::iterator best_block (size_t size)
   {
     auto iter = blocks.end ();
     for (auto it = blocks.begin (); it != blocks.end (); it++)
       {
-        if (!it->free || it->size < size)
-          continue;
-        if (iter == blocks.end () || it->size < iter->size)
-          iter = it;
+	if (!it->free || it->size < size)
+	  continue;
+	if (iter == blocks.end () || it->size < iter->size)
+	  iter = it;
       }
     return iter;
   }
 
-  decltype (blocks)::iterator
-  worst_block (size_t size)
+  decltype (blocks)::iterator worst_block (size_t size)
   {
     auto iter = blocks.end ();
     for (auto it = blocks.begin (); it != blocks.end (); it++)
       {
-        if (!it->free || it->size < size)
-          continue;
-        if (iter == blocks.end () || it->size > iter->size)
-          iter = it;
+	if (!it->free || it->size < size)
+	  continue;
+	if (iter == blocks.end () || it->size > iter->size)
+	  iter = it;
       }
     return iter;
   }
@@ -144,14 +142,14 @@ flush_table (QTableWidget *table, memory_allocator const &mem)
       auto sts = new QTableWidgetItem (blk.free ? "空闲" : "已分配");
       auto size = new QTableWidgetItem (QString::number (blk.size));
       auto data = new QTableWidgetItem (
-          "0x" + QString::number ((size_t)blk.data), 16);
+	  "0x" + QString::number ((size_t) blk.data), 16);
 
       sts->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
       size->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
       data->setTextAlignment (Qt::AlignmentFlag::AlignCenter);
 
       if (!blk.free)
-        sts->setForeground (QBrush (Qt::red));
+	sts->setForeground (QBrush (Qt::red));
 
       table->insertRow (row);
       table->setItem (row, 2, sts);
@@ -190,7 +188,7 @@ main (int argc, char **argv)
 
   QObject::connect (ui.btn1, &QPushButton::clicked, [&] {
     auto input = ui.edit->text ().toUInt ();
-    auto policy = (memory_allocator::policy)ui.combo->currentIndex ();
+    auto policy = (memory_allocator::policy) ui.combo->currentIndex ();
     mem.alloc (input, policy);
     flush_table (ui.table, mem);
   });

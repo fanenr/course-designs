@@ -20,12 +20,12 @@ struct page_table
   const size_t frame_size;
 
   page_table (size_t vm_size = 64 * 1024, size_t max_jobs = 4,
-              size_t frame_size = 1024)
+	      size_t frame_size = 1024)
       : vm_size (vm_size), max_jobs (max_jobs), frame_size (frame_size)
   {
     auto n = vm_size / frame_size;
     for (size_t i = 0; i < n; i++)
-      entries.push_back ({ false, false, i, (size_t)-1, i });
+      entries.push_back ({ false, false, i, (size_t) -1, i });
   }
 
   void
@@ -42,9 +42,9 @@ struct page_table
     auto &entry = entries.at (pno);
     if (entry.present)
       {
-        if (mod)
-          entry.modified = true;
-        return;
+	if (mod)
+	  entry.modified = true;
+	return;
       }
 
     auto n = queue.size ();
@@ -69,14 +69,14 @@ private:
     queue.pop_front ();
     entry->present = false;
     entry->modified = false;
-    entry->frame_number = (size_t)-1;
+    entry->frame_number = (size_t) -1;
 
     return frame;
   }
 };
 
 static const QMap<QString, bool> ops = {
-  { "+", true }, { "-", true },    { "*", true },
+  { "+", true }, { "-", true },	   { "*", true },
   { "/", true }, { "save", true }, { "load", false },
 };
 
@@ -91,7 +91,7 @@ flush_table (QTableWidget *table, page_table const &pt)
     auto pno = new QTableWidgetItem (QString::number (pte.page_number));
     auto flg = new QTableWidgetItem (pte.present ? "命中" : "失效");
     auto fno = new QTableWidgetItem (
-        frame == (size_t)-1 ? "" : QString::number (frame));
+	frame == (size_t) -1 ? "" : QString::number (frame));
     auto mod = new QTableWidgetItem (pte.modified ? "已修改" : "未修改");
     auto loc = new QTableWidgetItem (QString::number (pte.disk_location));
 
@@ -123,7 +123,7 @@ flush_table (QTableWidget *table, page_table const &pt)
       auto const &q = pt.queue;
       auto it = std::find (q.begin (), q.end (), &pte);
       if (it == q.end ())
-        add_row (row++, pte);
+	add_row (row++, pte);
     }
 }
 
@@ -160,19 +160,19 @@ main (int argc, char **argv)
 
     if (!pno_str.isEmpty () && !off_str.isEmpty ())
       {
-        auto pno = pno_str.toUInt ();
-        auto off = off_str.toUInt ();
-        pt.access (pno, off, mod);
-        flush_table (ui.table, pt);
-        return;
+	auto pno = pno_str.toUInt ();
+	auto off = off_str.toUInt ();
+	pt.access (pno, off, mod);
+	flush_table (ui.table, pt);
+	return;
       }
 
     if (!addr_str.isEmpty ())
       {
-        auto addr = addr_str.toUInt ();
-        pt.access (addr, mod);
-        flush_table (ui.table, pt);
-        return;
+	auto addr = addr_str.toUInt ();
+	pt.access (addr, mod);
+	flush_table (ui.table, pt);
+	return;
       }
   });
 

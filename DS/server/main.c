@@ -34,8 +34,8 @@ handle (struct mg_connection *conn, int ev, void *ev_data)
   api_ret ret = api_handle (msg);
 
   mg_http_reply (conn, 200, "Content-Type: application/json\r\n",
-                 "{\"code\": %d, \"data\": %s}", ret.status, ret.content);
+		 "{\"code\": %d, \"data\": %s}", ret.status, ret.content);
 
   if (ret.need_free)
-    free ((char *)ret.content);
+    free ((char *) ret.content);
 }

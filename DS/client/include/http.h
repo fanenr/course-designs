@@ -50,13 +50,13 @@ public:
   template <typename Slot>
   static QNetworkAccessManager *
   post (QString const &url, QJsonObject const &data, QObject const *recv,
-        Slot &&slot, QNetworkAccessManager *nam = nullptr)
+	Slot &&slot, QNetworkAccessManager *nam = nullptr)
   {
     if (!nam)
       {
-        nam = new QNetworkAccessManager;
-        connect (nam, &QNetworkAccessManager::finished, recv,
-                 std::forward<Slot> (slot));
+	nam = new QNetworkAccessManager;
+	connect (nam, &QNetworkAccessManager::finished, recv,
+		 std::forward<Slot> (slot));
       }
 
     auto req = json_req (url);
@@ -68,13 +68,13 @@ public:
   template <typename Slot>
   static QNetworkAccessManager *
   post (QString const &url, QJsonObject const &data, Slot &&slot,
-        QNetworkAccessManager *nam = nullptr)
+	QNetworkAccessManager *nam = nullptr)
   {
     if (!nam)
       {
-        nam = new QNetworkAccessManager;
-        connect (nam, &QNetworkAccessManager::finished,
-                 std::forward<Slot> (slot));
+	nam = new QNetworkAccessManager;
+	connect (nam, &QNetworkAccessManager::finished,
+		 std::forward<Slot> (slot));
       }
 
     auto req = json_req (url);
@@ -88,16 +88,16 @@ public:
   {
     if (reply->error ())
       {
-        QMessageBox::warning (ctx, tr ("失败"), tr ("无法发送网络请求"));
-        return std::nullopt;
+	QMessageBox::warning (ctx, tr ("失败"), tr ("无法发送网络请求"));
+	return std::nullopt;
       }
 
     auto obj = QJsonDocument::fromJson (reply->readAll ()).object ();
     if (obj["code"] != 0)
       {
-        QMessageBox::warning (ctx, tr ("失败"),
-                              obj["data"].toString (tr ("信息丢失")));
-        return std::nullopt;
+	QMessageBox::warning (ctx, tr ("失败"),
+			      obj["data"].toString (tr ("信息丢失")));
+	return std::nullopt;
       }
 
     return obj;
